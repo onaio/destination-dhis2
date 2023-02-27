@@ -15,6 +15,7 @@ from airbyte_cdk.models import (
     ConfiguredAirbyteCatalog,
     Status,
 )
+from requests.exceptions import RequestException
 
 from .authenticator import Dhis2Authenticator
 from .constants import DATA_ELEMENTS_PATH, TOKEN_REFRESH_PATH
@@ -71,20 +72,16 @@ class DestinationDhis2(Destination):
                     "pageSize": 1,
                 },
             )
-
-            try:
-                response.raise_for_status()
-            except requests.exceptions.HTTPError as e:
-                try:
-                    error = response.json()["message"]
-                    logger.error(f"{error}:{e}")
-                    raise Exception(f"{error}:{e}")
-                except Exception as e:
-                    raise e
+            response.raise_for_status()
             return AirbyteConnectionStatus(status=Status.SUCCEEDED)
 
-        except Exception as e:
-            logger.error(f"Error in check command: {e}")
-            return AirbyteConnectionStatus(
-                status=Status.FAILED, message=f"An exception occurred: {repr(e)}"
-            )
+        except RequestException as req_err:
+            try:
+                response_message = response.json()["message"]
+                raise RequestException(response_message)
+            except Exception:
+                logger.error(f"Exception in check command: {req_err}")
+                return AirbyteConnectionStatus(
+                    status=Status.FAILED,
+                    message=f"Exception in check command: {repr(req_err)}",
+                )
