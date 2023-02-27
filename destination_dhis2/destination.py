@@ -4,6 +4,7 @@
 
 
 from typing import Any, Iterable, Mapping
+from urllib.parse import urljoin
 
 import requests
 from airbyte_cdk import AirbyteLogger
@@ -53,14 +54,14 @@ class DestinationDhis2(Destination):
 
         try:
             authenticator = Dhis2Authenticator(
-                token_refresh_endpoint=f"{base_url}/uaa/oauth/token",
+                token_refresh_endpoint=urljoin(base_url, "/uaa/oauth/token"),
                 client_id=client_id,
                 client_secret=client_secret,
                 refresh_token=refresh_token,
             )
 
             response = requests.get(
-                url=f"{base_url}/api/dataElements.json",
+                url=urljoin(base_url, "/api/dataElements.json"),
                 headers=authenticator.get_auth_header(),
                 # return smallest possible subset
                 params={
