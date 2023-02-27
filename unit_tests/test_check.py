@@ -2,13 +2,14 @@ from unittest.mock import MagicMock
 
 from airbyte_cdk.models import AirbyteConnectionStatus, Status
 from requests.exceptions import ConnectTimeout, RequestException
+from requests_mock import Mocker
 
 from destination_dhis2.destination import DestinationDhis2
 
 
 def test_check_connection(
     config,
-    requests_mock,
+    requests_mock: Mocker,
     token_refresh_endpoint,
     sample_access_token,
     data_elements_url,
@@ -28,7 +29,7 @@ def test_check_connection(
 
 def test_check_connection_authenticator_fail(
     config,
-    requests_mock,
+    requests_mock: Mocker,
     token_refresh_endpoint,
     data_elements_url,
 ):
@@ -47,7 +48,7 @@ def test_check_connection_authenticator_fail(
 
 def test_check_connection_raise_for_status(
     config,
-    requests_mock,
+    requests_mock: Mocker,
     token_refresh_endpoint,
     sample_access_token,
     data_elements_url,
@@ -69,7 +70,7 @@ def test_check_connection_raise_for_status(
 
 def test_check_connection_fail(
     config,
-    requests_mock,
+    requests_mock: Mocker,
     token_refresh_endpoint,
     sample_access_token,
     data_elements_url,
