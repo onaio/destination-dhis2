@@ -5,6 +5,7 @@ from airbyte_cdk.sources.streams.http.requests_native_auth import (
     BasicHttpAuthenticator,
     Oauth2Authenticator,
 )
+from requests.exceptions import RequestException
 
 
 class Dhis2Authenticator(Oauth2Authenticator):
@@ -26,5 +27,5 @@ class Dhis2Authenticator(Oauth2Authenticator):
                 response_json[self.get_access_token_name()],
                 response_json[self.get_expires_in_name()],
             )
-        except Exception as e:
-            raise Exception(f"Error while refreshing access token: {e}") from e
+        except RequestException as e:
+            raise RequestException(f"Error while refreshing access token: {e}") from e

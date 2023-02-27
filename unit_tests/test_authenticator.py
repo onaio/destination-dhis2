@@ -1,4 +1,5 @@
 import pytest
+from requests.exceptions import RequestException
 from requests_mock import Mocker
 
 from destination_dhis2.authenticator import Dhis2Authenticator
@@ -16,8 +17,8 @@ def test_dhis2_authenticator(requests_mock: Mocker, oauth_configs, sample_access
 def test_dhis2_authenticator_fail(requests_mock: Mocker, oauth_configs):
     requests_mock.post(
         oauth_configs["token_refresh_endpoint"],
-        exc=Exception,
+        exc=RequestException,
     )
-    with pytest.raises(Exception) as exc_info:
+    with pytest.raises(RequestException) as exc_info:
         Dhis2Authenticator(**oauth_configs).get_auth_header()
     assert "Error while refreshing access token" in str(exc_info.value)
