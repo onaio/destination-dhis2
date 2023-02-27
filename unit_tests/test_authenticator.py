@@ -9,7 +9,7 @@ def test_dhis2_authenticator(
     requests_mock: Mocker, token_refresh_endpoint, oauth_configs, sample_access_token
 ):
     requests_mock.post(
-        token_refresh_endpoint,
+        url=token_refresh_endpoint,
         json={"access_token": sample_access_token, "expires_in": 43199},
     )
     resp = Dhis2Authenticator(**oauth_configs).get_auth_header()
@@ -20,7 +20,7 @@ def test_dhis2_authenticator_fail(
     requests_mock: Mocker, token_refresh_endpoint, oauth_configs
 ):
     requests_mock.post(
-        token_refresh_endpoint,
+        url=token_refresh_endpoint,
         exc=RequestException,
     )
     with pytest.raises(RequestException) as exc_info:

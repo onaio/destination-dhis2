@@ -17,11 +17,11 @@ def test_check_connection(
     source = DestinationDhis2()
     # fake refresh_token success
     requests_mock.post(
-        token_refresh_endpoint,
+        url=token_refresh_endpoint,
         json={"access_token": sample_access_token, "expires_in": 43199},
     )
     # fake check success
-    requests_mock.get(data_elements_url, text="Success")
+    requests_mock.get(url=data_elements_url, text="Success")
 
     resp = source.check(MagicMock(), config)
     assert resp == AirbyteConnectionStatus(status=Status.SUCCEEDED)
@@ -35,9 +35,9 @@ def test_check_connection_authenticator_fail(
 ):
     source = DestinationDhis2()
     # fake refresh_token RequestException
-    requests_mock.post(token_refresh_endpoint, exc=RequestException)
+    requests_mock.post(url=token_refresh_endpoint, exc=RequestException)
     # fake check success
-    requests_mock.get(data_elements_url, status_code=200)
+    requests_mock.get(url=data_elements_url, status_code=200)
 
     resp = source.check(MagicMock(), config)
     assert resp.status == AirbyteConnectionStatus(status=Status.FAILED).status
@@ -56,11 +56,11 @@ def test_check_connection_raise_for_status(
     source = DestinationDhis2()
     # fake refresh_token success
     requests_mock.post(
-        token_refresh_endpoint,
+        url=token_refresh_endpoint,
         json={"access_token": sample_access_token, "expires_in": 43199},
     )
     # fake check raise_for_status
-    requests_mock.get(data_elements_url, status_code=500)
+    requests_mock.get(url=data_elements_url, status_code=500)
 
     resp = source.check(MagicMock(), config)
     assert resp.status == AirbyteConnectionStatus(status=Status.FAILED).status
@@ -78,11 +78,11 @@ def test_check_connection_fail(
     source = DestinationDhis2()
     # fake refresh_token success
     requests_mock.post(
-        token_refresh_endpoint,
+        url=token_refresh_endpoint,
         json={"access_token": sample_access_token, "expires_in": 43199},
     )
     # fake check ConnectTimeout
-    requests_mock.get(data_elements_url, exc=ConnectTimeout)
+    requests_mock.get(url=data_elements_url, exc=ConnectTimeout)
 
     resp = source.check(MagicMock(), config)
     assert resp.status == AirbyteConnectionStatus(status=Status.FAILED).status
