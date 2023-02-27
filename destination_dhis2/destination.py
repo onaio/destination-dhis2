@@ -15,7 +15,7 @@ from airbyte_cdk.models import (
     Status,
 )
 
-from .dhis2_auth import Dhis2Authenticator
+from .dhis2_authenticator import Dhis2Authenticator
 
 
 class DestinationDhis2(Destination):
