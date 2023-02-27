@@ -17,6 +17,7 @@ from airbyte_cdk.models import (
 )
 
 from .authenticator import Dhis2Authenticator
+from .constants import DATA_ELEMENTS_PATH, TOKEN_REFRESH_PATH
 
 
 class DestinationDhis2(Destination):
@@ -54,14 +55,14 @@ class DestinationDhis2(Destination):
 
         try:
             authenticator = Dhis2Authenticator(
-                token_refresh_endpoint=urljoin(base_url, "/uaa/oauth/token"),
+                token_refresh_endpoint=urljoin(base_url, TOKEN_REFRESH_PATH),
                 client_id=client_id,
                 client_secret=client_secret,
                 refresh_token=refresh_token,
             )
 
             response = requests.get(
-                url=urljoin(base_url, "/api/dataElements.json"),
+                url=urljoin(base_url, DATA_ELEMENTS_PATH),
                 headers=authenticator.get_auth_header(),
                 # return smallest possible subset
                 params={
