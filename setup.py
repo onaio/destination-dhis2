@@ -9,7 +9,7 @@ MAIN_REQUIREMENTS = [
     "airbyte-cdk",
 ]
 
-TEST_REQUIREMENTS = ["pytest~=6.2"]
+TEST_REQUIREMENTS = ["pytest~=6.2", "snapshottest~=0.6.0"]
 
 setup(
     name="destination_dhis2",
