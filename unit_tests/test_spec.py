@@ -11,8 +11,7 @@ spec_file_data = json.load(spec_file)
 
 def test_spec(snapshot):
     source = DestinationDhis2()
-    logger_mock = MagicMock()
-    spec = source.spec(logger_mock)
+    spec = source.spec(MagicMock())
     assert (
         spec.connectionSpecification["title"]
         == spec_file_data["connectionSpecification"]["title"]
