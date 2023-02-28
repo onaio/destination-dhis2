@@ -72,16 +72,18 @@ class DestinationDhis2(Destination):
                     "pageSize": 1,
                 },
             )
-            response.raise_for_status()
+
+            if not response.ok:
+                try:
+                    response_message = response.json()["message"]
+                    raise RequestException(response_message)
+                except ValueError:
+                    response.raise_for_status()
             return AirbyteConnectionStatus(status=Status.SUCCEEDED)
 
         except RequestException as req_err:
-            try:
-                response_message = response.json()["message"]
-                raise RequestException(response_message)
-            except Exception:
-                logger.error(f"Exception in check command: {req_err}")
-                return AirbyteConnectionStatus(
-                    status=Status.FAILED,
-                    message=f"Exception in check command: {repr(req_err)}",
-                )
+            logger.error(f"Exception in check command: {req_err}")
+            return AirbyteConnectionStatus(
+                status=Status.FAILED,
+                message=f"Exception in check command: {repr(req_err)}",
+            )
