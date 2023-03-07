@@ -5,9 +5,7 @@
 
 import logging
 from typing import Any, Iterable, Mapping
-from urllib.parse import urljoin
 
-import requests
 from airbyte_cdk.destinations import Destination
 from airbyte_cdk.models import (  # type: ignore # see this https://github.com/airbytehq/airbyte/pull/22963
     AirbyteConnectionStatus,
@@ -17,8 +15,8 @@ from airbyte_cdk.models import (  # type: ignore # see this https://github.com/a
 )
 from requests.exceptions import RequestException
 
-from .authenticator import Dhis2Authenticator
-from .constants import DATA_ELEMENTS_PATH, TOKEN_REFRESH_PATH
+from .client import Dhis2Client
+from .constants import DATA_ELEMENTS_PATH
 
 
 class DestinationDhis2(Destination):
@@ -49,22 +47,12 @@ class DestinationDhis2(Destination):
     def check(
         self, logger: logging.Logger, config: Mapping[str, Any]
     ) -> AirbyteConnectionStatus:
-        base_url = config["base_url"]
-        client_id = config["client_id"]
-        client_secret = config["client_secret"]
-        refresh_token = config["refresh_token"]
-
         try:
-            authenticator = Dhis2Authenticator(
-                token_refresh_endpoint=urljoin(base_url, TOKEN_REFRESH_PATH),
-                client_id=client_id,
-                client_secret=client_secret,
-                refresh_token=refresh_token,
-            )
+            client = Dhis2Client(**config)
 
-            response = requests.get(
-                url=urljoin(base_url, DATA_ELEMENTS_PATH),
-                headers=authenticator.get_auth_header(),
+            response = client.request(
+                http_method="GET",
+                endpoint=DATA_ELEMENTS_PATH,
                 # return smallest possible subset
                 params={
                     "paging": "true",
