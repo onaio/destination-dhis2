@@ -35,7 +35,7 @@ def oauth_configs(
 
 @pytest.fixture(scope="session", autouse=True)
 def config(base_url: str, base_configs: dict[str, str]) -> dict[str, str]:
-    return {**base_configs, "base_url": base_url}
+    return {**base_configs, "base_url": base_url, "api_version": "29"}
 
 
 @pytest.fixture(scope="session", autouse=True)
