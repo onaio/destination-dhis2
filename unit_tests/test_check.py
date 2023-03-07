@@ -88,3 +88,29 @@ def test_check_connection_fail(
     assert resp.status == AirbyteConnectionStatus(status=Status.FAILED).status
     assert "Exception in check command" in str(resp.message)
     assert "ConnectTimeout" in str(resp.message)
+
+
+def test_check_connection_fail_with_message(
+    config: dict[str, str],
+    requests_mock: Mocker,
+    token_refresh_endpoint: str,
+    sample_access_token: str,
+    data_elements_url: str,
+) -> None:
+    source = DestinationDhis2()
+    # fake refresh_token success
+    requests_mock.post(
+        url=token_refresh_endpoint,
+        json={"access_token": sample_access_token, "expires_in": 43199},
+    )
+    # fake check ConnectTimeout
+    requests_mock.get(
+        url=data_elements_url,
+        status_code=400,
+        json={"message": "max-results cannot be negative"},
+    )
+
+    resp = source.check(MagicMock(), config)
+    assert resp.status == AirbyteConnectionStatus(status=Status.FAILED).status
+    assert "Exception in check command" in str(resp.message)
+    assert "max-results cannot be negative" in str(resp.message)
