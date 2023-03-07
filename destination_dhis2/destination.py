@@ -81,7 +81,7 @@ class DestinationDhis2(Destination):
                     response.raise_for_status()
             return AirbyteConnectionStatus(status=Status.SUCCEEDED)
 
-        except RequestException as req_err:
+        except (RequestException, Exception) as req_err:
             logger.error(f"Exception in check command: {req_err}")
             return AirbyteConnectionStatus(
                 status=Status.FAILED,
