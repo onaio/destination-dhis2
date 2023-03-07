@@ -6,35 +6,49 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "Destination Dhis2",
     "type": "object",
-    "required": ["base_url", "client_id", "client_secret", "refresh_token"],
+    "required": [
+      "base_url",
+      "api_version",
+      "client_id",
+      "client_secret",
+      "refresh_token"
+    ],
     "additionalProperties": false,
     "properties": {
       "base_url": {
         "type": "string",
         "description": "The base URL of the DHIS2 server",
         "title": "Base URL",
+        "examples": ["https://cfc-dhis2.labs.smartregister.org"],
         "order": 0
+      },
+      "api_version": {
+        "type": "string",
+        "description": "The DHIS2 API Version",
+        "title": "Base URL",
+        "examples": ["29"],
+        "order": 1
       },
       "client_id": {
         "type": "string",
         "description": "Oauth2.0 Client ID",
         "title": "Client ID",
         "airbyte_secret": true,
-        "order": 1
+        "order": 2
       },
       "client_secret": {
         "type": "string",
         "description": "Oauth2.0 Client Secret",
         "title": "Client Secret",
         "airbyte_secret": true,
-        "order": 2
+        "order": 3
       },
       "refresh_token": {
         "type": "string",
         "description": "Oauth2.0 Refresh Token",
         "title": "Refresh Token",
         "airbyte_secret": true,
-        "order": 3
+        "order": 4
       }
     }
   }

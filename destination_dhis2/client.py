@@ -4,13 +4,7 @@ from urllib.parse import urljoin
 import requests
 
 from .authenticator import Dhis2Authenticator
-from .constants import (
-    API_PATH,
-    API_VERSION_PATH,
-    DATA_VALUE_SETS_PATH,
-    PAGE_SIZE,
-    TOKEN_REFRESH_PATH,
-)
+from .constants import API_PATH, DATA_VALUE_SETS_PATH, PAGE_SIZE, TOKEN_REFRESH_PATH
 
 
 class DataValue(TypedDict):
@@ -33,11 +27,13 @@ class Dhis2Client:
         client_id: str,
         client_secret: str,
         refresh_token: str,
+        api_version: str,
     ):
         self.base_url = base_url
         self.client_id = client_id
         self.client_secret = client_secret
         self.refresh_token = refresh_token
+        self.api_version = api_version
 
     def _join_url_fragments(self, endpoint: str) -> str:
         # constitute complete url by join url fragments
@@ -45,7 +41,7 @@ class Dhis2Client:
         return urljoin(
             self.base_url,
             "/".join(
-                part.strip("/") for part in (API_PATH, API_VERSION_PATH, endpoint)
+                part.strip("/") for part in (API_PATH, self.api_version, endpoint)
             ),
         )
 
