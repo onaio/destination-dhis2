@@ -16,5 +16,5 @@ def test_spec(snapshot):
         spec.connectionSpecification["title"]
         == spec_file_data["connectionSpecification"]["title"]
     )
-    snapshot.assert_match(spec.connectionSpecification["title"])
+    assert spec.connectionSpecification["title"] == "Destination Dhis2"
     assert isinstance(spec, ConnectorSpecification)
