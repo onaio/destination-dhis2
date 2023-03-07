@@ -40,7 +40,7 @@ def config(base_url: str, base_configs: dict[str, str]) -> dict[str, str]:
 
 @pytest.fixture(scope="session", autouse=True)
 def join_url_fragments(config: dict[str, str]) -> Callable[[str], str]:
-    return Dhis2Client(**config).join_url_fragments
+    return Dhis2Client(**config)._join_url_fragments
 
 
 @pytest.fixture(scope="session", autouse=True)

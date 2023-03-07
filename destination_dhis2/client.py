@@ -39,7 +39,7 @@ class Dhis2Client:
         self.client_secret = client_secret
         self.refresh_token = refresh_token
 
-    def join_url_fragments(self, endpoint: str) -> str:
+    def _join_url_fragments(self, endpoint: str) -> str:
         # constitute complete url by join url fragments
         # while stripping possibly misplaced forward slashes
         return urljoin(
@@ -74,7 +74,7 @@ class Dhis2Client:
         params: Optional[dict[str, Any]] = None,
         json: Optional[dict[str, Any]] = None,
     ) -> requests.Response:
-        url = self.join_url_fragments(endpoint)
+        url = self._join_url_fragments(endpoint)
         headers = {
             "Accept": "application/json",
             "Content-Type": "application/json",
@@ -85,7 +85,7 @@ class Dhis2Client:
         )
         return response
 
-    def batch_write(self, dataValues: DataValues) -> requests.Response:
+    def _batch_write(self, dataValues: DataValues) -> requests.Response:
         """
         https://docs.dhis2.org/en/develop/using-the-api/dhis-core-version-master/data.html#webapi_sending_bulks_data_values
         """
@@ -121,7 +121,7 @@ class Dhis2Client:
         # best place to handle retry imo
         if len(self.write_buffer) > 0:
             try:
-                response = self.batch_write(self.write_buffer)
+                response = self._batch_write(self.write_buffer)
                 response.raise_for_status()
                 self.write_buffer.clear()
             except Exception as e:
