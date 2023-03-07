@@ -1,6 +1,9 @@
 from unittest.mock import MagicMock
 
-from airbyte_cdk.models import AirbyteConnectionStatus, Status
+from airbyte_cdk.models import (  # type: ignore # see this https://github.com/airbytehq/airbyte/pull/22963
+    AirbyteConnectionStatus,
+    Status,
+)
 from requests.exceptions import ConnectTimeout, RequestException
 from requests_mock import Mocker
 
@@ -8,12 +11,12 @@ from destination_dhis2.destination import DestinationDhis2
 
 
 def test_check_connection(
-    config,
+    config: dict[str, str],
     requests_mock: Mocker,
-    token_refresh_endpoint,
-    sample_access_token,
-    data_elements_url,
-):
+    token_refresh_endpoint: str,
+    sample_access_token: str,
+    data_elements_url: str,
+) -> None:
     source = DestinationDhis2()
     # fake refresh_token success
     requests_mock.post(
@@ -28,11 +31,11 @@ def test_check_connection(
 
 
 def test_check_connection_authenticator_fail(
-    config,
+    config: dict[str, str],
     requests_mock: Mocker,
-    token_refresh_endpoint,
-    data_elements_url,
-):
+    token_refresh_endpoint: str,
+    data_elements_url: str,
+) -> None:
     source = DestinationDhis2()
     # fake refresh_token RequestException
     requests_mock.post(url=token_refresh_endpoint, exc=RequestException)
@@ -47,12 +50,12 @@ def test_check_connection_authenticator_fail(
 
 
 def test_check_connection_raise_for_status(
-    config,
+    config: dict[str, str],
     requests_mock: Mocker,
-    token_refresh_endpoint,
-    sample_access_token,
-    data_elements_url,
-):
+    token_refresh_endpoint: str,
+    sample_access_token: str,
+    data_elements_url: str,
+) -> None:
     source = DestinationDhis2()
     # fake refresh_token success
     requests_mock.post(
@@ -69,12 +72,12 @@ def test_check_connection_raise_for_status(
 
 
 def test_check_connection_fail(
-    config,
+    config: dict[str, str],
     requests_mock: Mocker,
-    token_refresh_endpoint,
-    sample_access_token,
-    data_elements_url,
-):
+    token_refresh_endpoint: str,
+    sample_access_token: str,
+    data_elements_url: str,
+) -> None:
     source = DestinationDhis2()
     # fake refresh_token success
     requests_mock.post(

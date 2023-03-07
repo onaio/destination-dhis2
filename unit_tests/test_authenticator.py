@@ -6,8 +6,11 @@ from destination_dhis2.authenticator import Dhis2Authenticator
 
 
 def test_dhis2_authenticator(
-    requests_mock: Mocker, token_refresh_endpoint, oauth_configs, sample_access_token
-):
+    requests_mock: Mocker,
+    token_refresh_endpoint: str,
+    oauth_configs: dict[str, str],
+    sample_access_token: str,
+) -> None:
     requests_mock.post(
         url=token_refresh_endpoint,
         json={"access_token": sample_access_token, "expires_in": 43199},
@@ -17,8 +20,8 @@ def test_dhis2_authenticator(
 
 
 def test_dhis2_authenticator_fail(
-    requests_mock: Mocker, token_refresh_endpoint, oauth_configs
-):
+    requests_mock: Mocker, token_refresh_endpoint: str, oauth_configs: dict[str, str]
+) -> None:
     requests_mock.post(
         url=token_refresh_endpoint,
         exc=RequestException,

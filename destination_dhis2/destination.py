@@ -3,13 +3,13 @@
 #
 
 
+import logging
 from typing import Any, Iterable, Mapping
 from urllib.parse import urljoin
 
 import requests
-from airbyte_cdk import AirbyteLogger
 from airbyte_cdk.destinations import Destination
-from airbyte_cdk.models import (
+from airbyte_cdk.models import (  # type: ignore # see this https://github.com/airbytehq/airbyte/pull/22963
     AirbyteConnectionStatus,
     AirbyteMessage,
     ConfiguredAirbyteCatalog,
@@ -47,7 +47,7 @@ class DestinationDhis2(Destination):
         pass
 
     def check(
-        self, logger: AirbyteLogger, config: Mapping[str, Any]
+        self, logger: logging.Logger, config: Mapping[str, Any]
     ) -> AirbyteConnectionStatus:
         base_url = config["base_url"]
         client_id = config["client_id"]
