@@ -9,7 +9,11 @@ MAIN_REQUIREMENTS = [
     "airbyte-cdk",
 ]
 
-TEST_REQUIREMENTS = ["pytest~=6.2", "requests-mock~=1.10.0", "snapshottest~=0.6.0"]
+TEST_REQUIREMENTS = [
+    "pytest~=6.2",
+    "requests-mock~=1.10.0",
+    "mypy~=1.0.1",
+]
 
 setup(
     name="destination_dhis2",
