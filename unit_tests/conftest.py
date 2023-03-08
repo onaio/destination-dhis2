@@ -1,4 +1,3 @@
-from typing import Callable
 from urllib.parse import urljoin
 
 import pytest
@@ -39,13 +38,8 @@ def config(base_configs: dict[str, str], base_url: str) -> dict[str, str]:
 
 
 @pytest.fixture(scope="session", autouse=True)
-def join_url_fragments(config: dict[str, str]) -> Callable[[str], str]:
-    return Dhis2Client(**config)._join_url_fragments
-
-
-@pytest.fixture(scope="session", autouse=True)
-def data_elements_url(join_url_fragments: Callable[[str], str]) -> str:
-    return join_url_fragments(DATA_ELEMENTS_PATH)
+def data_elements_url(config: dict[str, str]) -> str:
+    return Dhis2Client(**config)._join_url_fragments(DATA_ELEMENTS_PATH)
 
 
 @pytest.fixture(scope="session", autouse=True)
