@@ -5,7 +5,7 @@ from airbyte_cdk.models import (  # type: ignore # see this https://github.com/a
     ConnectorSpecification,
 )
 
-from destination_dhis2.destination import DestinationDhis2
+from destination_dhis2 import DestinationDhis2
 
 spec_file = open("destination_dhis2/spec.json")
 spec_file_data = json.load(spec_file)

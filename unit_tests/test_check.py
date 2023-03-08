@@ -7,7 +7,7 @@ from airbyte_cdk.models import (  # type: ignore # see this https://github.com/a
 from requests.exceptions import ConnectTimeout, RequestException
 from requests_mock import Mocker
 
-from destination_dhis2.destination import DestinationDhis2
+from destination_dhis2 import DestinationDhis2
 
 
 def test_check_connection(

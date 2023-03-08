@@ -3,7 +3,7 @@ from urllib.parse import urljoin
 
 import pytest
 
-from destination_dhis2.client import Dhis2Client
+from destination_dhis2 import Dhis2Client
 from destination_dhis2.constants import DATA_ELEMENTS_PATH, TOKEN_REFRESH_PATH
 
 

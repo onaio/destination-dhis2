@@ -2,7 +2,7 @@ import pytest
 from requests.exceptions import RequestException
 from requests_mock import Mocker
 
-from destination_dhis2.authenticator import Dhis2Authenticator
+from destination_dhis2 import Dhis2Authenticator
 
 
 def test_dhis2_authenticator(
