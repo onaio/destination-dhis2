@@ -1,3 +1,5 @@
+from typing import Any, Mapping
+
 import pytest
 from requests.exceptions import RequestException
 from requests_mock import Mocker
@@ -8,7 +10,7 @@ from destination_dhis2 import Dhis2Authenticator
 def test_dhis2_authenticator(
     requests_mock: Mocker,
     token_refresh_endpoint: str,
-    oauth_configs: dict[str, str],
+    oauth_configs: Mapping[str, Any],
     sample_access_token: str,
 ) -> None:
     requests_mock.post(
@@ -20,7 +22,7 @@ def test_dhis2_authenticator(
 
 
 def test_dhis2_authenticator_fail(
-    requests_mock: Mocker, token_refresh_endpoint: str, oauth_configs: dict[str, str]
+    requests_mock: Mocker, token_refresh_endpoint: str, oauth_configs: Mapping[str, Any]
 ) -> None:
     requests_mock.post(
         url=token_refresh_endpoint,
