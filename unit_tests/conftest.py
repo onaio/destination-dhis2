@@ -28,13 +28,13 @@ def base_configs() -> dict[str, str]:
 
 @pytest.fixture(scope="session", autouse=True)
 def oauth_configs(
-    token_refresh_endpoint: str, base_configs: dict[str, str]
+    base_configs: dict[str, str], token_refresh_endpoint: str
 ) -> dict[str, str]:
     return {**base_configs, "token_refresh_endpoint": token_refresh_endpoint}
 
 
 @pytest.fixture(scope="session", autouse=True)
-def config(base_url: str, base_configs: dict[str, str]) -> dict[str, str]:
+def config(base_configs: dict[str, str], base_url: str) -> dict[str, str]:
     return {**base_configs, "base_url": base_url, "api_version": "29"}
 
 
