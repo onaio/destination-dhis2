@@ -2,7 +2,7 @@ from urllib.parse import urljoin
 
 import pytest
 
-from destination_dhis2 import Dhis2Client
+from destination_dhis2 import DataValues, Dhis2Client
 from destination_dhis2.constants import DATA_ELEMENTS_PATH, TOKEN_REFRESH_PATH
 
 
@@ -45,3 +45,23 @@ def data_elements_url(config: dict[str, str]) -> str:
 @pytest.fixture(scope="session", autouse=True)
 def sample_access_token() -> str:
     return "01-example-access-token-23"
+
+
+@pytest.fixture(scope="session", autouse=True)
+def data_values() -> DataValues:
+    return [
+        {
+            "dataElement": "Psxm301oJH1",
+            "completeDate": "2022-06-03",
+            "period": "202204",
+            "orgUnit": "i6724gjuOkw",
+            "value": "12",
+        },
+        {
+            "dataElement": "Yt0klR6lDPn",
+            "completeDate": "2022-06-04",
+            "period": "202204",
+            "orgUnit": "i6724gjuOkw",
+            "value": "14",
+        },
+    ]
