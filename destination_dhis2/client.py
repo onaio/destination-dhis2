@@ -87,16 +87,7 @@ class Dhis2Client:
         """
 
         request_body: dict[Literal["dataValues"], DataValues] = {
-            "dataValues": [
-                {
-                    "dataElement": dataValue["dataElement"],
-                    "completeDate": dataValue["completeDate"],
-                    "period": dataValue["period"],
-                    "orgUnit": dataValue["orgUnit"],
-                    "value": dataValue["value"],
-                }
-                for dataValue in dataValues
-            ]
+            "dataValues": dataValues
         }
         response = self.request(
             http_method="POST",
@@ -107,7 +98,15 @@ class Dhis2Client:
         return response
 
     def queue_write_operation(self, dataValue: DataValue) -> None:
-        self.write_buffer.append(dataValue)
+        # remove other possible appends
+        data_value: DataValue = {
+            "dataElement": dataValue["dataElement"],
+            "completeDate": dataValue["completeDate"],
+            "period": dataValue["period"],
+            "orgUnit": dataValue["orgUnit"],
+            "value": dataValue["value"],
+        }
+        self.write_buffer.append(data_value)
 
     def buffer_is_full(self) -> bool:
         return len(self.write_buffer) >= self._flush_interval
