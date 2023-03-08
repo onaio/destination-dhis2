@@ -25,7 +25,7 @@
       "api_version": {
         "type": "string",
         "description": "The DHIS2 API Version",
-        "title": "Base URL",
+        "title": "API Version",
         "examples": ["29"],
         "order": 1
       },
