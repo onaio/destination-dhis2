@@ -121,4 +121,4 @@ class Dhis2Client:
                 self.write_buffer.clear()
             except Exception as e:
                 raise e
-        pass
+        return
