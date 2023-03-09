@@ -4,6 +4,7 @@
 {"type":"RECORD","record":{"stream":"dataElements","data":{"dataElement":"Yt0klR6lDPn","completeDate":"2022-06-04","period":"202204","orgUnit":"i6724gjuOkw","value":"14"},"emitted_at":1677803667429}}
 {"type":"RECORD","record":{"stream":"dataElements","data":{"dataElement":"eknEEuIgoHa","completeDate":"2023-02-03","period":"202302","orgUnit":"i6724gjuOkw","value":"16"},"emitted_at":1677803667430}}
 {"type":"RECORD","record":{"stream":"dataElements","data":{"dataElement":"LeH4xcrTPuW","completeDate":"2023-02-05","period":"202302","orgUnit":"i6724gjuOkw","value":"18"},"emitted_at":1677803667431}}
+{"type":"RECORD","record":{"stream":"non_defined_stream","data":{"dataElementDescription":"complete"},"emitted_at":1677803667430}}
 {"type":"LOG","log":{"level":"INFO","message":"Read 4 records from dataElements stream"}}
 {"type":"LOG","log":{"level":"INFO","message":"Finished syncing dataElements"}}
 {"type":"LOG","log":{"level":"INFO","message":"SourceHapiFHIRAggregator runtimes:\nSyncing stream dataElements 0:00:01.012747"}}
