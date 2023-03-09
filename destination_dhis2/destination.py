@@ -31,21 +31,21 @@ class DestinationDhis2(Destination):
     ) -> Iterable[AirbyteMessage]:
         client = Dhis2Client(**config)
 
-        streams = {s.stream.name for s in configured_catalog.streams}
+        stream_names = {s.stream.name for s in configured_catalog.streams}
 
-        for configured_stream in configured_catalog.streams:
+        for stream_name in stream_names:
             airbyteLogger.info(
-                f"Starting write to DHIS2 with the '{configured_stream.stream.name}' stream"
+                f"Starting write to DHIS2 with the '{stream_name}' stream"
             )
 
             for message in input_messages:
                 if message.type == Type.RECORD:
                     data = message.record.data
-                    stream = message.record.stream
+                    record_stream_name = message.record.stream
 
-                    if stream not in streams:
-                        airbyteLogger.debug(
-                            f"Stream {stream} was not present in configured streams, skipping"
+                    if record_stream_name not in stream_names:
+                        airbyteLogger.warning(
+                            f"Stream {record_stream_name} was not present in configured streams, skipping"
                         )
                         continue
 
