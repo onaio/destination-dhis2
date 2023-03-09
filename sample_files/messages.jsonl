@@ -8,3 +8,4 @@
 {"type":"LOG","log":{"level":"INFO","message":"Finished syncing dataElements"}}
 {"type":"LOG","log":{"level":"INFO","message":"SourceHapiFHIRAggregator runtimes:\nSyncing stream dataElements 0:00:01.012747"}}
 {"type":"LOG","log":{"level":"INFO","message":"Finished syncing SourceHapiFHIRAggregator"}}
+{"type":"STATE","log":{"level":"INFO","message":"Finished syncing SourceHapiFHIRAggregator"}}
