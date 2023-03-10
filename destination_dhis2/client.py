@@ -92,7 +92,6 @@ class Dhis2Client:
         response = self.request(
             http_method="POST",
             endpoint=DATA_VALUE_SETS_PATH,
-            params={"dryRun": "true"},  # TODO: remove dry run
             json=request_body,  # type: ignore # Type[Literal["some_str"]] != str
         )
         return response
