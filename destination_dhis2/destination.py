@@ -29,6 +29,30 @@ class DestinationDhis2(Destination):
         configured_catalog: ConfiguredAirbyteCatalog,
         input_messages: Iterable[AirbyteMessage],
     ) -> Iterable[AirbyteMessage]:
+        """This method returns an iterable (typically a generator of AirbyteMessages via yield) containing state messages received
+        in the input message stream. Outputting a state message means that every AirbyteRecordMessage which came before it has been
+        successfully persisted to the destination. This is used to ensure fault tolerance in the case that a sync fails before fully completing,
+        then the source is given the last state message output from this method as the starting point of the next sync.
+
+
+        Parameters
+        ----------
+
+        config : Mapping[str, Any]
+            A dict of JSON configuration matching the configuration declared in spec.json
+
+        configured_catalog : ConfiguredAirbyteCatalog
+            The Configured Catalog describing the schema of the data being received and how it should be persisted in the destination
+
+        input_messages : Iterable[AirbyteMessage]
+            The stream of input messages received from the source
+
+        Returns
+        -------
+        Iterable[AirbyteMessage]
+            Iterable of AirbyteStateMessages wrapped in AirbyteMessage structs
+        """
+
         client = Dhis2Client(**config)
 
         stream_names = {s.stream.name for s in configured_catalog.streams}
