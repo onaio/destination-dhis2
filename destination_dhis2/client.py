@@ -46,10 +46,6 @@ class Dhis2Client:
         )
 
     @property
-    def _flush_interval(self) -> int:
-        return PAGE_SIZE
-
-    @property
     def _token_refresh_endpoint(self) -> str:
         # does not use the API_PATH prefix
         return urljoin(self.base_url, TOKEN_REFRESH_PATH)
@@ -108,7 +104,7 @@ class Dhis2Client:
         self.write_buffer.append(data_value)
 
     def buffer_is_full(self) -> bool:
-        return len(self.write_buffer) >= self._flush_interval
+        return len(self.write_buffer) >= PAGE_SIZE
 
     def flush(self) -> None:
         # TODO: Handle retry?
