@@ -114,10 +114,6 @@ class Dhis2Client:
         # TODO: Handle retry?
         # best place to handle retry imo
         if len(self.write_buffer) > 0:
-            try:
-                response = self._batch_write(self.write_buffer)
-                response.raise_for_status()
-                self.write_buffer.clear()
-            except Exception as e:
-                raise e
-        return
+            response = self._batch_write(self.write_buffer)
+            response.raise_for_status()
+            self.write_buffer.clear()
