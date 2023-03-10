@@ -55,7 +55,7 @@ class DestinationDhis2(Destination):
                     if client.buffer_is_full():
                         try:
                             client.flush()
-                        except Exception as e:
+                        except RequestException as e:
                             airbyteLogger.error(
                                 f"Exception flushing AirbyteRecordMessage: {e}"
                             )
@@ -70,7 +70,7 @@ class DestinationDhis2(Destination):
                         airbyteLogger.info(f"flushing buffer for state: {message}")
                         client.flush()
                         yield message
-                    except Exception as e:
+                    except RequestException as e:
                         airbyteLogger.error(
                             f"Exception flushing AirbyteStateMessage: {e}"
                         )
@@ -92,7 +92,7 @@ class DestinationDhis2(Destination):
             # Make sure to flush any records still in the queue
             try:
                 client.flush()
-            except Exception as e:
+            except RequestException as e:
                 airbyteLogger.error(f"Exception flushing AirbyteRecordMessage's: {e}")
                 raise e
 
@@ -121,7 +121,7 @@ class DestinationDhis2(Destination):
                     response.raise_for_status()
             return AirbyteConnectionStatus(status=Status.SUCCEEDED)
 
-        except (RequestException, Exception) as req_err:
+        except RequestException as req_err:
             logger.error(f"Exception in check command: {req_err}")
             return AirbyteConnectionStatus(
                 status=Status.FAILED,
