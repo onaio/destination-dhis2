@@ -3,22 +3,23 @@
 #
 
 
+import logging
 from typing import Any, Iterable, Mapping
-from urllib.parse import urljoin
 
-import requests
-from airbyte_cdk import AirbyteLogger
 from airbyte_cdk.destinations import Destination
-from airbyte_cdk.models import (
+from airbyte_cdk.models import (  # type: ignore # see this https://github.com/airbytehq/airbyte/pull/22963
     AirbyteConnectionStatus,
     AirbyteMessage,
     ConfiguredAirbyteCatalog,
     Status,
+    Type,
 )
 from requests.exceptions import RequestException
 
-from .authenticator import Dhis2Authenticator
-from .constants import DATA_ELEMENTS_PATH, TOKEN_REFRESH_PATH
+from .client import Dhis2Client
+from .constants import DATA_ELEMENTS_PATH
+
+airbyteLogger = logging.getLogger("airbyte")
 
 
 class DestinationDhis2(Destination):
@@ -28,43 +29,106 @@ class DestinationDhis2(Destination):
         configured_catalog: ConfiguredAirbyteCatalog,
         input_messages: Iterable[AirbyteMessage],
     ) -> Iterable[AirbyteMessage]:
-        """
-        TODO
-        Reads the input stream of messages, config, and catalog to write data to the destination.
-
-        This method returns an iterable (typically a generator of AirbyteMessages via yield) containing state messages received
+        """This method returns an iterable (typically a generator of AirbyteMessages via yield) containing state messages received
         in the input message stream. Outputting a state message means that every AirbyteRecordMessage which came before it has been
         successfully persisted to the destination. This is used to ensure fault tolerance in the case that a sync fails before fully completing,
         then the source is given the last state message output from this method as the starting point of the next sync.
 
-        :param config: dict of JSON configuration matching the configuration declared in spec.json
-        :param configured_catalog: The Configured Catalog describing the schema of the data being received and how it should be persisted in the
-                                    destination
-        :param input_messages: The stream of input messages received from the source
-        :return: Iterable of AirbyteStateMessages wrapped in AirbyteMessage structs
+
+        Parameters
+        ----------
+
+        config : Mapping[str, Any]
+            A dict of JSON configuration matching the configuration declared in spec.json
+
+        configured_catalog : ConfiguredAirbyteCatalog
+            The Configured Catalog describing the schema of the data being received and how it should be persisted in the destination
+
+        input_messages : Iterable[AirbyteMessage]
+            The stream of input messages received from the source
+
+        Returns
+        -------
+        Iterable[AirbyteMessage]
+            Iterable of AirbyteStateMessages wrapped in AirbyteMessage structs
         """
 
-        pass
+        client = Dhis2Client(**config)
 
-    def check(
-        self, logger: AirbyteLogger, config: Mapping[str, Any]
-    ) -> AirbyteConnectionStatus:
-        base_url = config["base_url"]
-        client_id = config["client_id"]
-        client_secret = config["client_secret"]
-        refresh_token = config["refresh_token"]
+        stream_names = {s.stream.name for s in configured_catalog.streams}
 
-        try:
-            authenticator = Dhis2Authenticator(
-                token_refresh_endpoint=urljoin(base_url, TOKEN_REFRESH_PATH),
-                client_id=client_id,
-                client_secret=client_secret,
-                refresh_token=refresh_token,
+        for stream_name in stream_names:
+            airbyteLogger.info(
+                f"Starting write to DHIS2 with the '{stream_name}' stream"
             )
 
-            response = requests.get(
-                url=urljoin(base_url, DATA_ELEMENTS_PATH),
-                headers=authenticator.get_auth_header(),
+            for message in input_messages:
+                if message.type == Type.RECORD:
+                    data = message.record.data
+                    record_stream_name = message.record.stream
+
+                    if record_stream_name not in stream_names:
+                        airbyteLogger.warning(
+                            f"Stream {record_stream_name} was not present in configured streams, skipping"
+                        )
+                        continue
+
+                    # add to buffer
+                    client.queue_write_operation(dataValue=data)
+
+                    if client.buffer_is_full():
+                        try:
+                            client.flush()
+                        except RequestException as e:
+                            airbyteLogger.error(
+                                f"Exception flushing AirbyteRecordMessage: {e}"
+                            )
+                            raise e
+
+                elif message.type == Type.STATE:
+                    # Emitting a state message indicates that all records which came before it
+                    # have been written to the destination.
+                    # So we flush the queue to ensure writes happen
+                    # then output the state message to indicate it's safe to checkpoint state.
+                    try:
+                        airbyteLogger.info(f"flushing buffer for state: {message}")
+                        client.flush()
+                        yield message
+                    except RequestException as e:
+                        airbyteLogger.error(
+                            f"Exception flushing AirbyteStateMessage: {e}"
+                        )
+                        raise e
+
+                elif message.type == Type.LOG:
+                    airbyteLogger.log(
+                        logging.getLevelName(message.log.level.value),
+                        message.log.message,
+                    )
+
+                # ignore other message types for now
+                else:
+                    airbyteLogger.info(
+                        f"Message type {message.type} not supported, skipping"
+                    )
+                    continue
+
+            # Make sure to flush any records still in the queue
+            try:
+                client.flush()
+            except RequestException as e:
+                airbyteLogger.error(f"Exception flushing AirbyteRecordMessage's: {e}")
+                raise e
+
+    def check(
+        self, logger: logging.Logger, config: Mapping[str, Any]
+    ) -> AirbyteConnectionStatus:
+        try:
+            client = Dhis2Client(**config)
+
+            response = client.request(
+                http_method="GET",
+                endpoint=DATA_ELEMENTS_PATH,
                 # return smallest possible subset
                 params={
                     "paging": "true",

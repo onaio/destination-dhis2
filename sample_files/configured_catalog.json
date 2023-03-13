@@ -1,0 +1,24 @@
+{
+  "streams": [
+    {
+      "stream": {
+        "name": "dataElements",
+        "json_schema": {
+          "$schema": "http://json-schema.org/schema#",
+          "type": "object",
+          "properties": {
+            "dataElement": { "type": "string" },
+            "completeDate": { "type": "string" },
+            "period": { "type": "string" },
+            "orgUnit": { "type": "string" },
+            "value": { "type": "string" }
+          }
+        },
+        "supported_sync_modes": ["full_refresh"],
+        "source_defined_primary_key": [["id"]]
+      },
+      "sync_mode": "full_refresh",
+      "destination_sync_mode": "overwrite"
+    }
+  ]
+}
